@@ -5,7 +5,7 @@
 # Let you record i/q stream and reencode it to be used	#
 # in gqrx						#
 #							#
-# ./megascript hh:mm mm/dd/yyyy mins filename		#
+# ./sdrrecorder hh:mm mm/dd/yyyy mins filename		#
 #							#
 # example:						#
 #							#
