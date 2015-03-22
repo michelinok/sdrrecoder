@@ -1,5 +1,7 @@
 Step by step instructions to use sdrrecorder (by MichelinoK) onto the Raspberry PI
 
+Video (including qgrx loading the file) can be found here: http://youtu.be/4cbg87hLXCg
+
 - Connect by ssh to the raspberry using the root user
 
 - create a folder of your choice (let's assume /root/rec). This is where we'll download the script
