@@ -1,0 +1,84 @@
+Step by step instructions to use sdrrecorder (by MichelinoK) onto the Raspberry PI
+
+- Connect by ssh to the raspberry using the root user
+
+- create a folder of your choice (let's assume /root/rec). This is where we'll download the script
+
+- create folder where you want to record the i/q stream to be used by gqrx (let's assume /media).
+In my setup, /media is a network share of my nas. You'll need a LOT of free and fast space to record the i/q stream!!!.
+The Raspberry CAN handle that speed over ethernet (using 1.200.0000 samples/sec).
+
+
+- cd into the first folder you created (/rec)
+
+- wget https://github.com/michelinok/sdrrecoder/blob/master/sdrrecorder.sh
+
+- chmod a+x sdrrecorder.sh
+
+- now edit the script with your favourite editor, I use "nano" and set your parameters.
+
+Let's take a look at the first part of the script (where you've to set the parameters):
+
+
+##############################################################################################################
+freq=145800000		# ...so gqrx center must be on 146100000   ( i use  145800000 for iss)
+fwshift=300000          # this is freqtuned-yourfreq (will tune to freq+fwshift) (i use 300000Hz as shift)
+samprate=1200000        # recording samplerate
+donglenum=1             # dongle number to be used
+gain=0                  # gain to be used , i use auto
+ppm=15                  # ppm correction
+dest=/media             # destination folder
+##############################################################################################################
+
+
+"freq":the interested frequency to be recorded, in my case i wanna record the International Space Station (ISS)
+"fwshift":the center of the spectrum will be shifted by "fwshift", so you'll be far from DC by "fwshift"
+"samprate":this is (of course) the samplerate to be used, I use 1.2M to have enough spectrum to see other freqs
+"donglenum":if you have more than one dongle, set it to the correct one, to secord the ISS I use my second dongle
+"gain":the gain to be used...if you set it to "0", it will be "auto"
+"ppm":the dongle ppm, nothing to say
+"dest":is the folder you've created...where you wanna record the i/q stream
+
+
+
+NOW an important thing...
+Look at this line of code:
+
+echo 'rtl_sdr -f '$tuneto ' -d '$donglenum ' -s '$samprate ' -p '$ppm ' -g '$gain ' -n '$samplestorec ' -X '$dest'/'$4 >> $dest'/'$4.sh
+
+If you do not use my modded rtl_sdr or you don't wanna use RTL AGC, you've to remove the "-X", so the script will become
+
+echo 'rtl_sdr -f '$tuneto ' -d '$donglenum ' -s '$samprate ' -p '$ppm ' -g '$gain ' -n '$samplestorec '  '$dest'/'$4 >> $dest'/'$4.sh
+
+When i'll get a free time, this will be a parameter/switch, so you will not have to edit it anymore.
+
+
+
+
+
+Now...how can i use the script? Edit the script and let's go on....
+
+Let's take for example a pass of the ISS on 03/31/2015 at 06:06 of 5 minutes and we want a file named "iss_03312015.out"
+
+You have to invoke the script with these parameters:
+
+./sdrrecorder 06:06 03/31/2015 5 iss_03312015
+
+the first paratere is the time
+the 2nd is the date (remember....mm/dd/yyyy)
+the 3rd is how many minutes you want to be record
+the 4th is the filename you want (it will be created in "dest", in my case it will be created a file called iss_03312015.out in /media/)
+
+Now you can logout from the Raspberry :)
+
+
+What will happen?
+A new script called iss_03312015.sh will be created in "dest" (containing all the steps to record/reencode) and it will be scheduled using the command "at" of Linux.
+Once the recording has been done, the temp script will be deleted, the i/q file will be converted to a format suitable for gqrx and the original i/q file will be deleted.
+
+That's all!
+
+Remember to not record too many minutes... the space required to store the stream is HUGE!!!!
+
+
+AS SOON AS POSSIBLE, I'LL EXPLAIN HOW TO LOAD THE FILE INTO GQRX AND "PLAY" IT.
